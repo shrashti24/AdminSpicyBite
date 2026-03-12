@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- ScrollView -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="28dp">
+
+            <!-- Logo -->
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/logo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/yeonsung_regular"
+                android:text="Spicy Bite"
+                android:textColor="@color/black"
+                android:textSize="38sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logo" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign Up Here For Your\nAdmin Dashboard"
+                android:textAlignment="center"
+                android:textColor="#4CD964"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title" />
+
+            <!-- Location Label -->
+
+            <!-- Location Field -->
+            <TextView
+                android:id="@+id/locationLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@color/white"
+                android:text="Choose Your Location"
+                android:textColor="#4CD964"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/location"
+                app:layout_constraintTop_toBottomOf="@id/subtitle" />
+
+            <AutoCompleteTextView
+                android:id="@+id/location"
+                android:layout_width="0dp"
+                android:layout_height="57dp"
+                android:background="@drawable/edittextshape"
+                android:drawableEnd="@drawable/arrow_down"
+                android:drawablePadding="12dp"
+                android:gravity="center_vertical"
+                android:hint="Choose Location"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:inputType="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/locationLabel"/>
+            <!-- Owner Name -->
+            <EditText
+                android:id="@+id/owner"
+                android:layout_width="0dp"
+                android:layout_height="57dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edittextshape"
+                android:drawableStart="@drawable/usernew"
+                android:drawablePadding="15dp"
+                android:fontFamily="@font/lato_regular"
+                android:hint="Name of Owner"
+                android:outlineSpotShadowColor="@color/texColor"
+                android:padding="18dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/location" />
+
+            <!-- Restaurant Name -->
+            <EditText
+                android:id="@+id/restaurant"
+                android:layout_width="0dp"
+                android:layout_height="57dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edittextshape"
+                android:drawableStart="@drawable/home"
+                android:drawablePadding="15dp"
+                android:fontFamily="@font/lato_regular"
+                android:hint="Name of Restaurant"
+                android:outlineSpotShadowColor="@color/texColor"
+                android:padding="18dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/owner" />
+
+            <!-- Email -->
+            <EditText
+                android:id="@+id/emailOrPhone"
+                android:layout_width="0dp"
+                android:layout_height="57dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edittextshape"
+                android:drawableStart="@drawable/mail"
+                android:drawablePadding="15dp"
+                android:fontFamily="@font/lato_regular"
+                android:hint="  Email or Phone Number"
+                android:inputType="textEmailAddress"
+                android:outlineSpotShadowColor="@color/texColor"
+                android:padding="18dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/restaurant" />
+
+            <!-- Password -->
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="0dp"
+                android:layout_height="57dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edittextshape"
+                android:drawableStart="@drawable/lock"
+                android:drawablePadding="15dp"
+                android:fontFamily="@font/lato_regular"
+                android:hint=" Password"
+                android:inputType="textPassword"
+                android:outlineSpotShadowColor="@color/texColor"
+                android:padding="18dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/emailOrPhone" />
+
+            <!-- Create Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/createBtn"
+                android:layout_width="157dp"
+                android:layout_height="57dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/greenbuttonshape"
+                android:outlineSpotShadowColor="@color/texColor"
+                android:text="Create Account"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/password" />
+
+            <!-- Already Have -->
+            <TextView
+                android:id="@+id/alreadybtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Already Have An Account?"
+                android:textColor="#4CD964"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/createBtn" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
