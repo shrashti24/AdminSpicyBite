@@ -3,17 +3,28 @@ package com.example.adminspicybite.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.adminspicybite.databinding.PendingOrdersItemBinding
 
 class PendingOrderAdapter(
-    private val customerNames: ArrayList<String>,
-    private val quantity: ArrayList<String>,
-    private val foodImage: ArrayList<Int>,
-    private val context: Context
+    private val context: Context,
+    private val customerNames:MutableList<String>,
+    private val quantity: MutableList<String>,
+    private val foodImage: MutableList<String>,
+    private val itemClicked: OnItemClicked
 ) : RecyclerView.Adapter<PendingOrderAdapter.PendingOrderViewHolder>() {
 
+    interface OnItemClicked{
+        fun onItemClickListener(position: Int)
+        fun onItemAcceptClickListener(position: Int)
+        fun onItemDispatchClickListener(position: Int)
+
+
+
+    }
     // State list to track accepted items
     private val acceptedList = MutableList(customerNames.size) { false }
 
@@ -38,7 +49,9 @@ class PendingOrderAdapter(
 
             binding.customerName.text = customerNames[position]
             binding.pendingorderquantity.text = quantity[position]
-            binding.orderedfoodImage.setImageResource(foodImage[position])
+            Glide.with(binding.orderedfoodImage.context)
+                .load(foodImage[position])
+                .into(binding.orderedfoodImage)
 
             // Set correct button text
             binding.acceptButton.text =
@@ -50,7 +63,7 @@ class PendingOrderAdapter(
                     acceptedList[position] = true
                     notifyItemChanged(position)
                     showToast("Order is Accepted")
-
+                    itemClicked.onItemAcceptClickListener(position)
                 } else {
                     // Remove from all lists
                     customerNames.removeAt(position)
@@ -60,7 +73,11 @@ class PendingOrderAdapter(
 
                     notifyItemRemoved(position)
                     showToast("Order is Dispatch")
+                    itemClicked.onItemDispatchClickListener(position)
                 }
+            }
+            itemView.setOnClickListener {
+                itemClicked.onItemClickListener(position)
             }
         }
 

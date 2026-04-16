@@ -72,6 +72,68 @@ class SignUpActivity : AppCompatActivity() {
 
 
         binding.location.setAdapter(adapter)
+        var isPasswordVisible2 = false
+
+        binding.eyeIcon2.setOnClickListener {
+
+            if (isPasswordVisible2) {
+                binding.password.inputType =
+                    android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+                binding.eyeIcon2.setImageResource(R.drawable.eye_off)
+                isPasswordVisible2 = false
+
+            } else {
+                binding.password.inputType =
+                    android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+
+                binding.eyeIcon2.setImageResource(R.drawable.eye)
+                isPasswordVisible2 = true
+            }
+
+            // font fix
+            binding.password.typeface = resources.getFont(R.font.lato_regular)
+
+            binding.password.setSelection(binding.password.text.length)
+        }
+        binding.password.addTextChangedListener(object : android.text.TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                val password = s.toString()
+
+                val strongPattern = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{7,}$")
+
+                if (password.isEmpty()) {
+                    // 👉 start me kuch show nahi
+                    binding.passwordStatus.text = ""
+
+                } else if (strongPattern.matches(password)) {
+                    // ✅ Strong
+                    binding.passwordStatus.text = "Strong Password ✅"
+                    binding.passwordStatus.setTextColor(
+                        androidx.core.content.ContextCompat.getColor(
+                            this@SignUpActivity,
+                            android.R.color.holo_green_dark
+                        )
+                    )
+
+                } else {
+                    // ❌ Weak
+                    binding.passwordStatus.text = "Weak Password ❌"
+                    binding.passwordStatus.setTextColor(
+                        androidx.core.content.ContextCompat.getColor(
+                            this@SignUpActivity,
+                            android.R.color.holo_red_dark
+                        )
+                    )
+                }
+            }
+
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
     }
     // Email validation
     private fun isValidEmail(email: String): Boolean {
@@ -106,10 +168,17 @@ class SignUpActivity : AppCompatActivity() {
         password = binding.password.text.toString().trim()
         userName = binding.owner.text.toString().trim()
         nameOfRestaurant = binding.restaurant.text.toString().trim()
-        val user= UserModel(userName,nameOfRestaurant,email,password)
+    val user = UserModel(
+        userName,
+        nameOfRestaurant,
+        email,
+        binding.location.text.toString(), // address
+        "", // phone
+        "admin" // role// 🔥 MOST IMPORTANT
+    )
         val userId:String=FirebaseAuth.getInstance().currentUser!!.uid
     //save user data firebase database
-        database.child("user").child(userId).setValue(user)
+        database.child("admin").child(userId).setValue(user)
 
 
     }

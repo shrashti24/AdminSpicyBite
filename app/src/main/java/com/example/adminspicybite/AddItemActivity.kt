@@ -116,11 +116,12 @@ class AddItemActivity : AppCompatActivity() {
                     val imageUrl = json.getString("secure_url")
 
                     val newItem = AllMenu(
+                        newItemKey,
                         foodName = foodName,
                         foodPrice = foodPrice,
                         foodDescription = foodDescription,
                         foodImage = imageUrl,
-                        foodIngrediant = foodIngrediant
+                        foodIngrediant = foodIngrediant,
                     )
 
                     newItemKey?.let { key ->

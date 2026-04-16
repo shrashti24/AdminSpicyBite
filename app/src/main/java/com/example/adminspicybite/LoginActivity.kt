@@ -88,7 +88,68 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        var isPasswordVisible = false
 
+        binding.eyeIcon.setOnClickListener {
+
+            if (isPasswordVisible) {
+                // 🔒 Hide password
+                binding.password.inputType =
+                    android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+                binding.eyeIcon.setImageResource(R.drawable.eye_off)
+                isPasswordVisible = false
+
+            } else {
+                // 👁️ Show password
+                binding.password.inputType =
+                    android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+
+                binding.eyeIcon.setImageResource(R.drawable.eye)
+                isPasswordVisible = true
+            }
+
+            // ✅ IMPORTANT: Font same rakho (XML wala)
+            binding.password.typeface = resources.getFont(R.font.lato_regular)
+            // 👆 yaha apna font name daalo (jo XML me hai)
+
+            // cursor end me
+            binding.password.setSelection(binding.password.text.length)
+        }
+        binding.forgotpassword.setOnClickListener {
+
+            val email = binding.emailOrPhone.text.toString().trim()
+
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(this, "Enter valid email", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            sendPasswordResetLink(email)
+        }
+
+    }
+    private fun sendPasswordResetLink(email: String) {
+
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+
+                if (task.isSuccessful) {
+                    Toast.makeText(
+                        this,
+                        "Reset link sent to your email",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                } else {
+                    Toast.makeText(this, "Check your email for reset link 📩", Toast.LENGTH_LONG).show()
+                }
+            }
     }
 
     private fun isValidEmail(email: String): Boolean {
@@ -107,58 +168,39 @@ class LoginActivity : AppCompatActivity() {
 
                 if (task.isSuccessful) {
 
+                    // ✅ Login success
                     val user = auth.currentUser
-                    Toast.makeText(this, "Login Successfully", Toast.LENGTH_SHORT).show()
+
                     updateUI(user)
 
                 } else {
 
-                    // Account nahi mila → naya create karo
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { createTask ->
+                    val exception = task.exception?.message
 
-                            if (createTask.isSuccessful) {
+                    if (exception != null && exception.contains("no user record", true)) {
 
-                                val user = auth.currentUser
+                        Toast.makeText(
+                            this,
+                            "Account does not exist. Please sign up first.",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                                val userData = UserModel(
-                                    "User",
-                                    "Not Available",
-                                    email,
-                                    password
-                                )
+                        startActivity(Intent(this, SignUpActivity::class.java))
 
-                                val userId = user?.uid
+                    }
+                    // 🔥 Check if user not found
+              else {
 
-                                userId?.let {
-                                    database.child("user").child(it).setValue(userData)
-                                }
-
-                                Toast.makeText(
-                                    this,
-                                    "Account Created Successfully",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
-                                updateUI(user)
-
-                            } else {
-
-                                Toast.makeText(
-                                    this,
-                                    "Authentication Failed",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
-                            }
-
-                        }
-
+                        // ❌ User exist hai but password galat ya dusra issue
+                        Toast.makeText(
+                            this,
+                            "Login Failed: ${task.exception?.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-
             }
     }
-
 
     private fun saveUserData() {
 
@@ -169,53 +211,91 @@ class LoginActivity : AppCompatActivity() {
             userName = "User",
             nameOfRestaurant = "Not Available",
             email = email,
-            password = password
+//            password = password
         )
 
         val userId = auth.currentUser?.uid
 
         if (userId != null) {
-            database.child("user").child(userId).setValue(user)
+            database.child("admin").child(userId).setValue(user)
         }
     }
 
 
-    private val launcher=registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-    result->
-        if(result.resultCode== Activity.RESULT_OK){
-            val task=GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            if(task.isSuccessful){
-                val account: GoogleSignInAccount =task.result
-                val credential= GoogleAuthProvider.getCredential(account.idToken,null)
-                auth.signInWithCredential(credential).addOnCompleteListener{it->
-                    if(it.isSuccessful) {
-                        Toast.makeText(this, "Succesfully sign in with Google", Toast.LENGTH_SHORT)
-                            .show()
-                        updateUI(it.result?.user)
-                        finish()
-                    }
-                    else{
-                        Toast.makeText(this, "Sign in with Google failed", Toast.LENGTH_SHORT).show()
+    private val launcher=registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            if (task.isSuccessful) {
+                val account: GoogleSignInAccount = task.result
+                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+                auth.signInWithCredential(credential).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+
+                        val user = auth.currentUser
+                        val uid = user?.uid ?: return@addOnCompleteListener
+
+                        // 🔥 CHECK ADMIN EXIST OR NOT
+                        database.child("admin").child(uid).get()
+                            .addOnSuccessListener { snapshot ->
+
+                                if (snapshot.exists()) {
+                                    // ✅ Already Admin
+                                    Toast.makeText(this, "Admin Login Success", Toast.LENGTH_SHORT)
+                                        .show()
+                                    updateUI(user)
+
+                                } else {
+                                    // ❌ First time Google login → create admin
+                                    val adminData = UserModel(
+                                        userName = user?.displayName ?: "Admin",
+                                        nameOfRestaurant = "Not Available",
+                                        email = user?.email ?: "",
+//                                        password = "",
+                                        role = "admin"
+                                    )
+
+                                    database.child("admin").child(uid).setValue(adminData)
+
+                                    Toast.makeText(this, "New Admin Created", Toast.LENGTH_SHORT)
+                                        .show()
+                                    updateUI(user)
+                                }
+                            }
+                    } else {
+                        Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show()
                     }
                 }
-
-                    }
-            else{
-                Toast.makeText(this, "Sign in with Google failed", Toast.LENGTH_SHORT).show()
             }
-    }
+        }
     }
     //check if user has alreadylogged in
     override fun onStart() {
         super.onStart()
         val currentUser:FirebaseUser?=auth.currentUser
        if(currentUser!=null){
-           startActivity(Intent(this, MainActivity::class.java))
-           finish()
+           updateUI(currentUser)  // 🔥 ROLE CHECK
        }
     }
     private fun updateUI(user: FirebaseUser?) {
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+
+        val uid = user?.uid ?: return
+
+        database.child("admin").child(uid).get()
+            .addOnSuccessListener { snapshot ->
+
+                if (snapshot.exists()) {
+                    // ✅ Admin hai
+                    Toast.makeText(this, "Login Successfully", Toast.LENGTH_SHORT).show()
+
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                } else {
+                    // ❌ Admin nahi hai
+                    Toast.makeText(this, "Access Denied! Not an Admin", Toast.LENGTH_SHORT).show()
+                    auth.signOut(
+
+                    )
+                }
+            }
     }
 }
