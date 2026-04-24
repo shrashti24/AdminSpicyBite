@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.adminspicybite.databinding.ActivityMainBinding
-import com.example.adminspicybite.model.OrderDetails
+import com.example.adminspicybite.model.OrderModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -75,41 +75,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun wholeTimeEarning() {
-       val listOfTotalPay = mutableListOf<Int>()
-        completedOrderReference=FirebaseDatabase.getInstance().reference.child("CompletedOrder")
-        completedOrderReference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (orderSnapshot in snapshot.children) {
 
-                    val completeOrder = orderSnapshot.getValue(OrderDetails::class.java)
+        FirebaseDatabase.getInstance().reference
+            .child("CompletedOrder")
+            .addValueEventListener(object : ValueEventListener {
 
-                    completeOrder?.let { order ->
+                override fun onDataChange(snapshot: DataSnapshot) {
 
-                        // 🔥 MOST IMPORTANT CONDITION
-                        if (order.paymentReceived == true) {
+                    var total = 0
 
-                            order.totalPrice
-                                ?.replace("₹", "")
-                                ?.replace("$", "")
-                                ?.trim()
-                                ?.toIntOrNull()
-                                ?.let { amount ->
-                                    listOfTotalPay.add(amount)
-                                }
-                        }
+                    for (orderSnapshot in snapshot.children) {
+
+                        val order = orderSnapshot.getValue(OrderModel::class.java)
+
+                        val price = order?.totalPrice
+                            ?.replace("₹", "")
+                            ?.replace(",", "")
+                            ?.trim()
+                            ?.toIntOrNull() ?: 0
+
+                        total += price
                     }
+
+                    binding.wholeTime.text = "₹$total"
                 }
-                val total = listOfTotalPay.sum()
-                binding.wholeTime.text = "₹$total"
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-        })
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
-
     private fun completedOrder() {
 
         val completedOrderReference = database.reference.child("CompletedOrder")
@@ -132,20 +125,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun pendingOrders() {
         database = FirebaseDatabase.getInstance()
-        val pendingOrderReference = database.reference.child("Order Details")
-        var pendingOrderItemCount = 0
-        pendingOrderReference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                pendingOrderItemCount = snapshot.childrenCount.toInt()
-                binding.pendingOrders.text = pendingOrderItemCount.toString()
-            }
+        val pendingOrderReference = database.reference.child("Orders")
 
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
+        pendingOrderReference
+            .orderByChild("status")
+            .equalTo("pending")
+            .addValueEventListener(object : ValueEventListener {
 
-        })
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val count = snapshot.childrenCount.toInt()
+                    binding.pendingOrders.text = count.toString()
+                }
 
-
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 }

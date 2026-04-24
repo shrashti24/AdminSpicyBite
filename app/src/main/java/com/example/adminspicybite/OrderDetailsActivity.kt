@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.adminspicybite.adapter.OrderDetailsAdapter
 import com.example.adminspicybite.databinding.ActivityOrderDetailsBinding
-import com.example.adminspicybite.model.OrderDetails
+import com.example.adminspicybite.model.OrderModel
 
 class OrderDetailsActivity : AppCompatActivity() {
     private val binding : ActivityOrderDetailsBinding by lazy {
@@ -35,7 +35,7 @@ class OrderDetailsActivity : AppCompatActivity() {
     }
 
     private fun getDataFromIntent() {
-        val receivedOrderDetails=intent.getSerializableExtra("UserOrderDetails") as OrderDetails
+        val receivedOrderDetails=intent.getSerializableExtra("UserOrderDetails") as OrderModel
         receivedOrderDetails?.let{
                 userName=receivedOrderDetails.userName
                 foodNames=receivedOrderDetails.foodNames as ArrayList<String>

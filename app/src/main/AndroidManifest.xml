@@ -11,9 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AdminSpicyBite">
-        <activity
-            android:name=".DeliveryLoginActivity"
-            android:exported="false" />
+        <activity android:name=".AdminChatActivity"/>
         <activity
             android:name=".OrderDetailsActivity"
             android:exported="false" />

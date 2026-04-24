@@ -40,8 +40,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.firebase.database)
     implementation(libs.play.services.auth)
@@ -58,4 +56,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.github.bumptech.glide:glide:5.0.5")
+}
+configurations.all {
+    resolutionStrategy {
+        force("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
+    }
 }

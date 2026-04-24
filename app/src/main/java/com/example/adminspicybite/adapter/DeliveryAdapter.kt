@@ -4,53 +4,39 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adminspicybite.databinding.DeliveryItemBinding
+import com.example.adminspicybite.model.DeliveryBoy
 
 class DeliveryAdapter(
-    private val context: Context, private val customerNames: MutableList<String>,
-    private val moneyStatus: MutableList<Boolean>
-): RecyclerView.Adapter<DeliveryAdapter.DeliveryViewHolder>() {
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): DeliveryViewHolder {
-       val binding= DeliveryItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        return DeliveryViewHolder(binding)
+    private val list: ArrayList<DeliveryBoy>,
+    private val onClick: (DeliveryBoy) -> Unit
+) : RecyclerView.Adapter<DeliveryAdapter.VH>() {
+
+    class VH(view: View) : RecyclerView.ViewHolder(view) {
+        val name = view.findViewById<TextView>(android.R.id.text1)
     }
 
-    override fun onBindViewHolder(
-        holder: DeliveryViewHolder,
-        position: Int
-    ) {
-        holder.bind(position)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(android.R.layout.simple_list_item_1, parent, false)
+        return VH(view)
     }
 
-    override fun getItemCount(): Int =customerNames.size
+    override fun onBindViewHolder(holder: VH, position: Int) {
 
+        val item = list[position]
 
-    inner class DeliveryViewHolder (private val binding: DeliveryItemBinding):RecyclerView.ViewHolder(binding.root) {
-        fun bind(position: Int) {
-            binding.apply {
-                customername.text = customerNames[position]
-                if (moneyStatus[position]==true) {
-                    statusmoney.text = "Received"
-                } else {
-                    statusmoney.text = "NotReceived"
-                }
-                val colorMap = mapOf(
-                    true to Color.GREEN,
-                    false to Color.RED,
+        // ✔️ SHOW NAME NOT ID
+        holder.name.text = item.name ?: "No Name Found"
 
-                )
-                statusmoney.setTextColor(colorMap[moneyStatus[position]]?: Color.BLACK)
-
-                statusColor.backgroundTintList =
-                    ColorStateList.valueOf(colorMap[moneyStatus[position]]?: Color.BLACK)
-
-
-            }
+        holder.itemView.setOnClickListener {
+            onClick(item)
         }
     }
+
+    override fun getItemCount() = list.size
 }

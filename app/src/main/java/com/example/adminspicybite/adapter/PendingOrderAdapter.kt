@@ -60,10 +60,13 @@ class PendingOrderAdapter(
             binding.acceptButton.setOnClickListener {
 
                 if (!acceptedList[position]) {
+
+                    itemClicked.onItemAcceptClickListener(position)  // 🔥 PEHLE YE
+
                     acceptedList[position] = true
                     notifyItemChanged(position)
+
                     showToast("Order is Accepted")
-                    itemClicked.onItemAcceptClickListener(position)
                 } else {
                     // Remove from all lists
                     customerNames.removeAt(position)
