@@ -261,8 +261,8 @@ class PendingOrderActivity : AppCompatActivity(), PendingOrderAdapter.OnItemClic
                 .child(uid)
                 .child("BuyHistory")
                 .child(orderId)
-                .child("paymentReceived")
-                .setValue(false)
+                .child("status")
+                .setValue("out_for_delivery")
         }
 
         statusUpdateOrderDetails(orderId)
