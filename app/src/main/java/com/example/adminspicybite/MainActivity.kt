@@ -105,23 +105,23 @@ class MainActivity : AppCompatActivity() {
     }
     private fun completedOrder() {
 
-        val completedOrderReference = database.reference.child("CompletedOrder")
-        var completedOrderItemCount = 0
-        completedOrderReference.addListenerForSingleValueEvent(object : ValueEventListener {
+        database = FirebaseDatabase.getInstance()
+
+        val completedOrderReference =
+            database.reference.child("CompletedOrder")
+
+        completedOrderReference.addValueEventListener(object : ValueEventListener {
+
             override fun onDataChange(snapshot: DataSnapshot) {
-                completedOrderItemCount = snapshot.childrenCount.toInt()
-                binding.completeOrders.text = completedOrderItemCount.toString()
+
+                val count = snapshot.childrenCount.toInt()
+
+                binding.completeOrders.text = count.toString()
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
+            override fun onCancelled(error: DatabaseError) {}
         })
-
-
     }
-
 
     private fun pendingOrders() {
         database = FirebaseDatabase.getInstance()

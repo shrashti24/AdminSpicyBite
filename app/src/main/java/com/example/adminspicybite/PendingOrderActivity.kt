@@ -230,6 +230,13 @@ class PendingOrderActivity : AppCompatActivity(), PendingOrderAdapter.OnItemClic
             "status" to "out_for_delivery"
         )
         orderRef.updateChildren(updates)
+            .addOnSuccessListener {
+
+                FirebaseDatabase.getInstance()
+                    .reference.child("CompletedOrder")
+                    .child(orderId)
+                    .setValue(order)
+            }
 //        // 2. Build completed order object
 //        val orderMap = HashMap<String, Any>()
 //        orderMap["orderId"] = orderId
