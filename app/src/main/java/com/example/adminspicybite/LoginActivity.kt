@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val googleSignInOptions= GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
@@ -55,28 +55,29 @@ class LoginActivity : AppCompatActivity() {
             email = binding.emailOrPhone.text.toString().trim()
             password = binding.password.text.toString().trim()
 
-            if (email.isBlank() || password.isBlank()) {
+            if (email.isEmpty()) {
 
-                Toast.makeText(this, "Please fill all the details", Toast.LENGTH_SHORT).show()
-
+                binding.emailOrPhone.error = "Enter email"
+                binding.emailOrPhone.requestFocus()
+                return@setOnClickListener
             }
-            else if (!isValidEmail(email)) {
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
 
                 binding.emailOrPhone.error = "Enter valid email"
-                return@setOnClickListener
-
-            }
-            else if (!isValidPassword(password)) {
-
-                binding.password.error =
-                    "Password must contain uppercase, lowercase, number and special character"
+                binding.emailOrPhone.requestFocus()
                 return@setOnClickListener
             }
-            else {
 
-                createUserAccount(email, password)
+            if (password.isEmpty()) {
 
+                binding.password.error = "Enter password"
+                binding.password.requestFocus()
+                return@setOnClickListener
             }
+
+            createUserAccount(email, password)
+
         }
         binding.googlebutton.setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
@@ -134,6 +135,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }
+
     private fun sendPasswordResetLink(email: String) {
 
         auth.sendPasswordResetEmail(email)
@@ -147,20 +149,13 @@ class LoginActivity : AppCompatActivity() {
                     ).show()
 
                 } else {
-                    Toast.makeText(this, "Check your email for reset link 📩", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Failed to send reset link", Toast.LENGTH_LONG).show()
                 }
             }
     }
 
-    private fun isValidEmail(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
 
-    private fun isValidPassword(password: String): Boolean {
-        val passwordRegex =
-            Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#\$%^&+=!]).{6,}$")
-        return passwordRegex.matches(password)
-    }
+
     private fun createUserAccount(email: String, password: String) {
 
         auth.signInWithEmailAndPassword(email, password)
@@ -175,50 +170,39 @@ class LoginActivity : AppCompatActivity() {
 
                 } else {
 
-                    val exception = task.exception?.message
+                    when {
 
-                    if (exception != null && exception.contains("no user record", true)) {
+                        task.exception?.message?.contains("password is invalid", true) == true -> {
 
-                        Toast.makeText(
-                            this,
-                            "Account does not exist. Please sign up first.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            Toast.makeText(
+                                this,
+                                "Incorrect Password",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
-                        startActivity(Intent(this, SignUpActivity::class.java))
+                        task.exception?.message?.contains("no user record", true) == true -> {
 
-                    }
-                    // 🔥 Check if user not found
-              else {
+                            Toast.makeText(
+                                this,
+                                "Account does not exist. Please Sign Up.",
+                                Toast.LENGTH_SHORT
+                            ).show()
 
-                        // ❌ User exist hai but password galat ya dusra issue
-                        Toast.makeText(
-                            this,
-                            "Login Failed: ${task.exception?.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            startActivity(Intent(this, SignUpActivity::class.java))
+                        }
+
+                        else -> {
+
+                            Toast.makeText(
+                                this,
+                                "Login Failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
             }
-    }
-
-    private fun saveUserData() {
-
-        val email = binding.emailOrPhone.text.toString().trim()
-        val password = binding.password.text.toString().trim()
-
-        val user = UserModel(
-            userName = "User",
-            nameOfRestaurant = "Not Available",
-            email = email,
-//            password = password
-        )
-
-        val userId = auth.currentUser?.uid
-
-        if (userId != null) {
-            database.child("admin").child(userId).setValue(user)
-        }
     }
 
 
@@ -248,7 +232,7 @@ class LoginActivity : AppCompatActivity() {
                                     // ❌ First time Google login → create admin
                                     val adminData = UserModel(
                                         userName = user?.displayName ?: "Admin",
-                                        nameOfRestaurant = "Not Available",
+                                        nameOfRestaurant = "",
                                         email = user?.email ?: "",
 //                                        password = "",
                                         role = "admin"

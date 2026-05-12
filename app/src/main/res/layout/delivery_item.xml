@@ -74,17 +74,29 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/deliveryBoyName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Assigned To"
+                android:textSize="13sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toBottomOf="@id/textview11"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="12dp"/>
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/statusColor"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:backgroundTint="#4CAF50"
                 app:cardCornerRadius="22dp"
-                app:layout_constraintEnd_toEndOf="@+id/textview11"
-                app:layout_constraintHorizontal_bias="0.483"
-                app:layout_constraintStart_toStartOf="@+id/textview11"
-                app:layout_constraintTop_toBottomOf="@+id/textview11" />
+                app:layout_constraintEnd_toEndOf="@+id/deliveryBoyName"
+                app:layout_constraintHorizontal_bias="0.562"
+                app:layout_constraintStart_toStartOf="@+id/deliveryBoyName"
+                app:layout_constraintTop_toBottomOf="@+id/deliveryBoyName" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

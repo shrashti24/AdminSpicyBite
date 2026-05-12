@@ -15,10 +15,7 @@ import com.google.firebase.database.database
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private lateinit var email: String
-    private lateinit var password: String
-    private  lateinit var userName: String
-    private lateinit var nameOfRestaurant: String
+
     private lateinit var database: DatabaseReference
 
     private lateinit var binding: ActivitySignUpBinding
@@ -37,41 +34,23 @@ class SignUpActivity : AppCompatActivity() {
 
         binding.createBtn.setOnClickListener {
             //get text from edittext
-            email = binding.emailOrPhone.text.toString().trim()
-            password = binding.password.text.toString().trim()
-            userName = binding.owner.text.toString().trim()
-            nameOfRestaurant = binding.restaurant.text.toString().trim()
-            if (userName.isBlank() || nameOfRestaurant.isBlank() || email.isBlank() || password.isBlank()) {
-                Toast.makeText(this, "Please fill all the details", Toast.LENGTH_SHORT).show()
-            }   else if (!isValidEmail(email)) {
-                Toast.makeText(this, "Enter a valid email address", Toast.LENGTH_SHORT).show()
-            }
-            else if (!isValidPassword(password)) {
-                Toast.makeText(
-                    this,
-                    "Password must be 8 characters, include 1 capital letter and 1 number",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-            else {
-                createAccount(email, password)
-            }
+           createAccount()
         }
         binding.alreadybtn.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
-        val locationList = arrayOf("Jaipur", "Odisha", "Bundi", "Sikar")
-
-        val adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            locationList
-        )
-
-
-        binding.location.setAdapter(adapter)
+//        val locationList = arrayOf("Jaipur", "Odisha", "Bundi", "Sikar")
+//
+//        val adapter = ArrayAdapter(
+//            this,
+//            android.R.layout.simple_list_item_1,
+//            locationList
+//        )
+//
+//
+//        binding.location.setAdapter(adapter)
         var isPasswordVisible2 = false
 
         binding.eyeIcon2.setOnClickListener {
@@ -104,7 +83,8 @@ class SignUpActivity : AppCompatActivity() {
 
                 val password = s.toString()
 
-                val strongPattern = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{7,}$")
+                val strongPattern =
+                    Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{8,}$")
 
                 if (password.isEmpty()) {
                     // 👉 start me kuch show nahi
@@ -135,51 +115,151 @@ class SignUpActivity : AppCompatActivity() {
             override fun afterTextChanged(s: android.text.Editable?) {}
         })
     }
-    // Email validation
-    private fun isValidEmail(email: String): Boolean {
-        val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"
-        return Regex(emailPattern).matches(email)
-    }
 
-    // Password validation
-    private fun isValidPassword(password: String): Boolean {
-        val passwordPattern = "^(?=.*[A-Z])(?=.*[0-9]).{8,}$"
-        return Regex(passwordPattern).matches(password)
-    }
+    private fun createAccount() {
+        val firstName = binding.firstName.text.toString().trim()
+        val middleName = binding.middleName.text.toString().trim()
+        val lastName = binding.lastName.text.toString().trim()
+        val restaurant = binding.restaurant.text.toString().trim()
+        val email = binding.emailOrPhone.text.toString().trim()
+        val password = binding.password.text.toString().trim()
 
-    private fun createAccount(email: String, password: String) {
+        // FULL NAME
+        val fullName =
+            listOf(firstName, middleName, lastName)
+                .filter { it.trim().isNotEmpty() }
+                .joinToString(" ")
+        // ================= VALIDATION =================
+
+        if (firstName.isEmpty()) {
+            binding.firstName.error = "Enter first name"
+            return
+        }
+
+        if (!firstName.matches(Regex("^[A-Za-z ]+$"))) {
+            binding.firstName.error = "Only alphabets allowed"
+            return
+        }
+        if (middleName.isNotEmpty() &&
+            !middleName.matches(Regex("^[A-Za-z ]+$"))
+        ) {
+            binding.middleName.error = "Only alphabets allowed"
+            return
+        }
+        if (lastName.isNotEmpty() &&
+            !lastName.matches(Regex("^[A-Za-z ]+$"))
+        ) {
+            binding.lastName.error = "Only alphabets allowed"
+            return
+        }
+        if (restaurant.isEmpty()) {
+            binding.restaurant.error = "Enter restaurant name"
+            return
+        }
+
+        if (email.isEmpty()) {
+            binding.emailOrPhone.error = "Enter email"
+            return
+        }
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.emailOrPhone.error = "Invalid email"
+            return
+        }
+
+        if (password.isEmpty()) {
+            binding.password.error = "Enter password"
+            return
+        }
+
+        val passwordPattern =
+            Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{8,}$")
+
+        if (!password.matches(passwordPattern)) {
+            binding.password.error = "Weak password"
+            return
+        }
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Account Created Successfully", Toast.LENGTH_SHORT).show()
-                    saveUserData()
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    saveUserData(
+                        firstName,
+                        middleName,
+                        lastName,
+                        fullName,
+                        restaurant,
+                        email
+                    )
+
                 } else {
-                    Toast.makeText(this, "Account Creation Failed", Toast.LENGTH_SHORT).show()
-                    Log.d("Account", "createAccount:Failur", task.exception)
+                    Toast.makeText(
+                        this,
+                        task.exception?.message.toString(),
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    Log.e("FirebaseError", task.exception.toString())
                 }
             }
     }
-//save data in  to database
-    fun saveUserData() {
-        email = binding.emailOrPhone.text.toString().trim()
-        password = binding.password.text.toString().trim()
-        userName = binding.owner.text.toString().trim()
-        nameOfRestaurant = binding.restaurant.text.toString().trim()
-    val user = UserModel(
-        userName,
-        nameOfRestaurant,
-        email,
-        binding.location.text.toString(), // address
-        "", // phone
-        "admin" // role// 🔥 MOST IMPORTANT
-    )
-        val userId:String=FirebaseAuth.getInstance().currentUser!!.uid
-    //save user data firebase database
-        database.child("admin").child(userId).setValue(user)
+// ================= SAVE DATA =================
 
+    private fun saveUserData(
+        firstName: String,
+        middleName: String,
+        lastName: String,
+        fullName: String,
+        restaurantName: String,
+        email: String
+    ) {
 
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (userId == null) {
+            Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val user = UserModel(
+
+            firstName = firstName,
+            middleName = middleName,
+            lastName = lastName,
+
+            userName = fullName,
+
+            nameOfRestaurant = restaurantName,
+
+            email = email,
+
+            address = "",
+
+            phone = "",
+
+            role = "admin"
+        )
+
+        database.child("admin")
+            .child(userId)
+            .setValue(user)
+            .addOnSuccessListener {
+
+                Toast.makeText(
+                    this,
+                    "Account Created Successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+            .addOnFailureListener {
+
+                Toast.makeText(
+                    this,
+                    "Failed to save data",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 }

@@ -28,7 +28,7 @@ class PendingOrderActivity : AppCompatActivity(), PendingOrderAdapter.OnItemClic
     private var listOfOrderItem: ArrayList<OrderModel> = arrayListOf()
     private lateinit var databaseOrderDetails: DatabaseReference
 
-
+    private var listOfStatus: MutableList<String> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPendingOrderBinding.inflate(layoutInflater)
@@ -79,8 +79,6 @@ class PendingOrderActivity : AppCompatActivity(), PendingOrderAdapter.OnItemClic
     private fun getOrderDetails() {
 
         databaseOrderDetails
-            .orderByChild("status")
-            .equalTo("pending")
             .addValueEventListener(object : ValueEventListener {
 
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -89,41 +87,84 @@ class PendingOrderActivity : AppCompatActivity(), PendingOrderAdapter.OnItemClic
 
                     for (orderSnapshot in snapshot.children) {
 
-                        val order = orderSnapshot.getValue(OrderModel::class.java)
+                        val order =
+                            orderSnapshot.getValue(OrderModel::class.java)
 
                         if (order != null) {
-                            order.itemPushKey = orderSnapshot.key
-                            listOfOrderItem.add(order)
+
+                            // ✅ ONLY SHOW:
+                            // pending OR Rejected
+
+                            if (
+                                order.status == "pending" ||
+                                order.status == "Rejected"
+                            ) {
+
+                                order.itemPushKey = orderSnapshot.key
+
+                                listOfOrderItem.add(order)
+                            }
                         }
                     }
 
                     addDataToListForRecyclerView()
                 }
 
-                override fun onCancelled(error: DatabaseError) {}
+                override fun onCancelled(error: DatabaseError) {
+
+                    Toast.makeText(
+                        this@PendingOrderActivity,
+                        error.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             })
     }
 
     private fun addDataToListForRecyclerView() {
+
         listOfName.clear()
         listOfTotalPrice.clear()
         listOfImageFirstOrder.clear()
+        listOfStatus.clear()
+
         for (orderItem in listOfOrderItem) {
-            //add data to respective list for populstiong the recycler view
-            orderItem.userName?.let { listOfName.add(it) }
-            orderItem.totalPrice?.let { listOfTotalPrice.add(it) }
-            val firstImage = orderItem.foodImages?.firstOrNull()
+
+            orderItem.userName?.let {
+                listOfName.add(it)
+            }
+
+            orderItem.totalPrice?.let {
+                listOfTotalPrice.add(it)
+            }
+
+            orderItem.status?.let {
+                listOfStatus.add(it)
+            }
+
+            val firstImage =
+                orderItem.foodImages?.firstOrNull()
+
             if (!firstImage.isNullOrEmpty()) {
+
                 listOfImageFirstOrder.add(firstImage)
             }
         }
+
         setAdapter()
     }
 
     private fun setAdapter() {
         binding.pendingorderrecyclerview.layoutManager = LinearLayoutManager(this)
         val adapter =
-            PendingOrderAdapter(this, listOfName, listOfTotalPrice, listOfImageFirstOrder, this)
+            PendingOrderAdapter(
+                this,
+                listOfName,
+                listOfTotalPrice,
+                listOfImageFirstOrder,
+                listOfStatus,
+                this
+            )
         binding.pendingorderrecyclerview.adapter = adapter
     }
 
@@ -168,14 +209,19 @@ class PendingOrderActivity : AppCompatActivity(), PendingOrderAdapter.OnItemClic
                 return@setItems
             }
 
-            assignOrder(orderId, selectedBoy.id!!, position)
+            assignOrder(
+                orderId,
+                selectedBoy.id!!,
+                selectedBoy.name ?: "Unknown",
+                position
+            )
         }
 
         dialog.show()
     }
 
 
-    private fun assignOrder(orderId: String, deliveryBoyId: String, position: Int) {
+    private fun assignOrder(orderId: String, deliveryBoyId: String,  deliveryBoyName: String, position: Int) {
         val boyRef = FirebaseDatabase.getInstance().reference
             .child("DeliveryBoys")
             .child(deliveryBoyId)
@@ -191,7 +237,12 @@ class PendingOrderActivity : AppCompatActivity(), PendingOrderAdapter.OnItemClic
             }
             val updates = hashMapOf<String, Any>(
                 "status" to "assigned",
-                "assignedTo" to deliveryBoyId
+                "assignedTo" to deliveryBoyId,
+                "deliveryBoyName" to deliveryBoyName,
+                "rejectedBy" to "",
+                "rejectedAt" to "",
+
+                "deliveryAccepted" to false
             )
 
             FirebaseDatabase.getInstance().reference

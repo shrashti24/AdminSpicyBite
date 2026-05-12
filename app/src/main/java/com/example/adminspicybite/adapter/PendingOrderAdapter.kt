@@ -14,6 +14,7 @@ class PendingOrderAdapter(
     private val customerNames:MutableList<String>,
     private val quantity: MutableList<String>,
     private val foodImage: MutableList<String>,
+    private val statusList: MutableList<String>,
     private val itemClicked: OnItemClicked
 ) : RecyclerView.Adapter<PendingOrderAdapter.PendingOrderViewHolder>() {
 
@@ -48,6 +49,18 @@ class PendingOrderAdapter(
         fun bind(position: Int) {
 
             binding.customerName.text = customerNames[position]
+            if (statusList[position] == "Rejected") {
+
+                binding.acceptButton.text = "Reassign"
+
+            } else {
+
+                binding.acceptButton.text =
+                    if (acceptedList[position])
+                        "Dispatch"
+                    else
+                        "Accept"
+            }
             binding.pendingorderquantity.text = quantity[position]
             Glide.with(binding.orderedfoodImage.context)
                 .load(foodImage[position])

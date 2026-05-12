@@ -49,7 +49,15 @@ class OutForDeliveryActivity : AppCompatActivity() {
                     val order = orderSnapshot.getValue(OrderModel::class.java)
 
                     if (order != null) {
-                        listOfCompleteOrderList.add(order)
+                        if (
+                            order.status == "Accepted" ||
+                            order.status == "Picked Up" ||
+                            order.status == "On The Way" ||
+                            order.status == "Arrived" ||
+                            order.status == "Delivered"
+                        ) {
+                            listOfCompleteOrderList.add(order)
+                        }
                     }
                 }
 

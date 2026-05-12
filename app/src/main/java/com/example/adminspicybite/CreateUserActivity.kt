@@ -79,6 +79,9 @@ class CreateUserActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: android.text.Editable?) {}
         })
+        binding.backButton.setOnClickListener {
+            finish()
+        }
         binding.password.addTextChangedListener(object : android.text.TextWatcher {
 
             override fun beforeTextChanged(
@@ -121,28 +124,69 @@ class CreateUserActivity : AppCompatActivity() {
 
         binding.createuserBtn.setOnClickListener {
 
-            val name = binding.name.text.toString().trim()
+            val firstName = binding.firstName.text.toString().trim()
+            val middleName = binding.middleName.text.toString().trim()
+            val lastName = binding.lastName.text.toString().trim()
+
+            // ✅ Full Name
+            val fullName = listOf(firstName, middleName, lastName)
+                .filter { it.isNotEmpty() }
+                .joinToString(" ")
+
             val email = binding.email.text.toString().trim()
             val phone = binding.phone.text.toString().trim()
             val password = binding.password.text.toString().trim()
 
             val phonePattern = Regex("^[6-9][0-9]{9}$")
 
-            if (!phone.matches(phonePattern)) {
-                Toast.makeText(this, "Enter valid 10-digit phone number", Toast.LENGTH_SHORT).show()
+            // ✅ First Name Required
+            if (firstName.isEmpty()) {
+                binding.firstName.error = "Enter First Name"
+                return@setOnClickListener
+            }
+            // ✅ Last Name Required
+            if (lastName.isNotEmpty() &&
+                !lastName.matches(Regex("^[A-Za-z ]+$"))
+            ) {
+                binding.lastName.error = "Only alphabets allowed"
                 return@setOnClickListener
             }
 
-            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || phone.isEmpty()) {
-                Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show()
+            // ✅ Name Validation
+            if (!firstName.matches(Regex("^[A-Za-z ]+$"))) {
+                binding.firstName.error = "Only alphabets allowed"
+                return@setOnClickListener
+            }
+            if (middleName.isNotEmpty() &&
+                !middleName.matches(Regex("^[A-Za-z ]+$"))
+            ) {
+                binding.middleName.error = "Only alphabets allowed"
                 return@setOnClickListener
             }
 
+            // ✅ Empty Check
+            if (email.isEmpty() || password.isEmpty() || phone.isEmpty()) {
+                Toast.makeText(this, "Fill all required fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // ✅ Email Validation
             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 Toast.makeText(this, "Enter valid email", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            // ✅ Phone Validation
+            if (!phone.matches(phonePattern)) {
+                Toast.makeText(
+                    this,
+                    "Enter valid 10-digit phone number",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            // ✅ Strong Password Validation
             val passwordPattern =
                 Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{7,}$")
 
@@ -155,6 +199,7 @@ class CreateUserActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+
             // 🔥 CREATE DELIVERY BOY
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
@@ -162,21 +207,26 @@ class CreateUserActivity : AppCompatActivity() {
                     val userId = auth.currentUser!!.uid
                     val db = FirebaseDatabase.getInstance().reference
 
-                    // 👤 USER NODE (LOGIN PURPOSE)
-                    val userMap = HashMap<String, Any>()
-                    userMap["name"] = name
-                    userMap["email"] = email
-                    userMap["phone"] = phone
-                    userMap["role"] = "deliveryBoy"
-                    userMap["isAvailable"] = true
-                    userMap["earnings"] = 0
+//                    // 👤 USER NODE (LOGIN PURPOSE)
+//                    val userMap = HashMap<String, Any>()
+//                    userMap["name"] = name
+//                    userMap["email"] = email
+//                    userMap["phone"] = phone
+//                    userMap["role"] = "deliveryBoy"
+//                    userMap["isAvailable"] = true
+//                    userMap["earnings"] = 0
 
                     // 🚴 DELIVERY BOY NODE (REAL WORK DATA)
                     val deliveryMap = HashMap<String, Any>()
                     deliveryMap["id"] = userId
-                    deliveryMap["name"] = name
+                    deliveryMap["firstName"] = firstName
+                    deliveryMap["middleName"] = middleName
+                    deliveryMap["lastName"] = lastName
+                    deliveryMap["name"] = fullName
+
                     deliveryMap["email"] = email
                     deliveryMap["phone"] = phone
+                    deliveryMap["role"] = "deliveryBoy"
                     deliveryMap["assignedOrders"] = 0
                     deliveryMap["deliveredOrders"] = 0
                     deliveryMap["activeDrops"] = 0
@@ -184,7 +234,7 @@ class CreateUserActivity : AppCompatActivity() {
                     deliveryMap["isAvailable"] = true
 
                     // 🔥 SAVE TO FIREBASE
-                    db.child("Users").child(userId).setValue(userMap)
+
                     db.child("DeliveryBoys").child(userId).setValue(deliveryMap)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Delivery Boy Created", Toast.LENGTH_SHORT).show()

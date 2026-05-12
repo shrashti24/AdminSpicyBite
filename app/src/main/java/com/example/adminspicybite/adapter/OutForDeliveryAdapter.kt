@@ -30,7 +30,8 @@ class OutForDeliveryAdapter(
         val order = list[position]
 
         holder.binding.customername.text = order.userName ?: "No Name"
-
+        holder.binding.deliveryBoyName.text =
+            order.deliveryBoyName ?: "No Boy"
         val payment = order.paymentReceived ?: false
 
         if (payment) {

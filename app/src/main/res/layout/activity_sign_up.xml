@@ -58,41 +58,41 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/title" />
 
-            <!-- Location Label -->
+<!--            &lt;!&ndash; Location Label &ndash;&gt;-->
 
-            <!-- Location Field -->
-            <TextView
-                android:id="@+id/locationLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@color/white"
-                android:text="Choose Your Location"
-                android:textColor="#4CD964"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/location"
-                app:layout_constraintTop_toBottomOf="@id/subtitle" />
+<!--            &lt;!&ndash; Location Field &ndash;&gt;-->
+<!--            <TextView-->
+<!--                android:id="@+id/locationLabel"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="12dp"-->
+<!--                android:background="@color/white"-->
+<!--                android:text="Choose Your Location"-->
+<!--                android:textColor="#4CD964"-->
+<!--                android:textSize="16sp"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintHorizontal_bias="0.0"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/location"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/subtitle" />-->
 
-            <AutoCompleteTextView
-                android:id="@+id/location"
-                android:layout_width="0dp"
-                android:layout_height="57dp"
-                android:background="@drawable/edittextshape"
-                android:drawableEnd="@drawable/arrow_down"
-                android:drawablePadding="12dp"
-                android:gravity="center_vertical"
-                android:hint="Choose Location"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:inputType="none"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/locationLabel"/>
+<!--            <AutoCompleteTextView-->
+<!--                android:id="@+id/location"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="57dp"-->
+<!--                android:background="@drawable/edittextshape"-->
+<!--                android:drawableEnd="@drawable/arrow_down"-->
+<!--                android:drawablePadding="12dp"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:hint="Choose Location"-->
+<!--                android:paddingStart="18dp"-->
+<!--                android:paddingEnd="18dp"-->
+<!--                android:inputType="none"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/locationLabel"/>-->
             <!-- Owner Name -->
             <EditText
-                android:id="@+id/owner"
+                android:id="@+id/firstName"
                 android:layout_width="0dp"
                 android:layout_height="57dp"
                 android:layout_marginTop="12dp"
@@ -100,12 +100,50 @@
                 android:drawableStart="@drawable/usernew"
                 android:drawablePadding="15dp"
                 android:fontFamily="@font/lato_regular"
-                android:hint="Name of Owner"
+                android:hint="Enter First Name"
+                android:inputType="textPersonName"
+                android:outlineSpotShadowColor="@color/texColor"
+                android:padding="18dp"
+                android:textColorHint="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/subtitle" />
+
+            <EditText
+                android:id="@+id/middleName"
+                android:layout_width="0dp"
+                android:layout_height="57dp"
+                android:layout_marginTop="12dp"
+                android:inputType="textPersonName"
+                android:textColorHint="@color/black"
+                android:background="@drawable/edittextshape"
+                android:drawableStart="@drawable/usernew"
+                android:drawablePadding="15dp"
+                android:fontFamily="@font/lato_regular"
+                android:hint="Enter Middle Name"
                 android:outlineSpotShadowColor="@color/texColor"
                 android:padding="18dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/location" />
+                app:layout_constraintTop_toBottomOf="@id/firstName" />
+            <EditText
+                android:id="@+id/lastName"
+                android:layout_width="0dp"
+                android:layout_height="57dp"
+                android:inputType="textPersonName"
+                android:textColorHint="@color/black"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edittextshape"
+                android:drawableStart="@drawable/usernew"
+                android:drawablePadding="15dp"
+                android:fontFamily="@font/lato_regular"
+                android:hint="Enter Last Name"
+                android:outlineSpotShadowColor="@color/texColor"
+                android:padding="18dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/middleName" />
+
 
             <!-- Restaurant Name -->
             <EditText
@@ -116,13 +154,14 @@
                 android:background="@drawable/edittextshape"
                 android:drawableStart="@drawable/home"
                 android:drawablePadding="15dp"
+                android:textColorHint="@color/black"
                 android:fontFamily="@font/lato_regular"
                 android:hint="Name of Restaurant"
                 android:outlineSpotShadowColor="@color/texColor"
                 android:padding="18dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/owner" />
+                app:layout_constraintTop_toBottomOf="@id/lastName" />
 
             <!-- Email -->
             <EditText
@@ -134,7 +173,8 @@
                 android:drawableStart="@drawable/mail"
                 android:drawablePadding="15dp"
                 android:fontFamily="@font/lato_regular"
-                android:hint="  Email or Phone Number"
+                android:hint="  Email"
+                android:textColorHint="@color/black"
                 android:inputType="textEmailAddress"
                 android:outlineSpotShadowColor="@color/texColor"
                 android:padding="18dp"
@@ -151,6 +191,7 @@
                 android:background="@drawable/edittextshape"
                 android:drawableStart="@drawable/lock"
                 android:drawablePadding="15dp"
+                android:textColorHint="@color/black"
                 android:fontFamily="@font/lato_regular"
                 android:hint=" Password"
                 android:inputType="textPassword"

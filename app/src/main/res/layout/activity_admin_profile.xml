@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:fontFamily="@font/yeonsung_regular"
-        android:text="Admin Profile"
+        android:text="Restaurant Owner Profile"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="32sp"
@@ -111,45 +111,180 @@
 
     </LinearLayout>
 
+    <!-- HOUSE NO -->
     <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="377dp"
+        android:id="@+id/layoutHouse"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/edittextshape"
-        android:elevation="2dp"
-        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:outlineSpotShadowColor="@color/texColor"
         android:padding="4dp"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:layout_editor_absoluteX="8dp">
-        <!-- Left Side Name -->
+        app:layout_constraintTop_toBottomOf="@id/linearLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:fontFamily="@font/yeonsung_regular"
-            android:gravity="center_vertical"
-            android:paddingStart="10dp"
-            android:text="Address"
+            android:text="House No"
+            android:textSize="18sp"
             android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:fontFamily="@font/yeonsung_regular"/>
 
-        <!-- Right Side EditText -->
         <EditText
-            android:id="@+id/address"
+            android:id="@+id/houseNo"
             android:layout_width="0dp"
-            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:background="@android:color/transparent"
-            android:fontFamily="@font/lato_regular"
-            android:hint="Enter Address"
-            android:inputType="textMultiLine"
-            android:padding="4dp"
-            android:textSize="14sp" />
+            android:hint="Enter House No"
+            android:inputType="text"
+            android:textColor="@color/black"/>
+    </LinearLayout>
 
+    <!-- STREET -->
+    <LinearLayout
+        android:id="@+id/layoutStreet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/edittextshape"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutHouse"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Street"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/yeonsung_regular"/>
+
+        <EditText
+            android:id="@+id/street"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:background="@android:color/transparent"
+            android:hint="Enter Street"
+            android:inputType="text"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+
+    <!-- CITY -->
+    <LinearLayout
+        android:id="@+id/layoutCity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/edittextshape"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutStreet"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="City"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/yeonsung_regular"/>
+
+        <EditText
+            android:id="@+id/city"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:background="@android:color/transparent"
+            android:hint="Enter City"
+            android:inputType="text"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+
+    <!-- STATE -->
+    <LinearLayout
+        android:id="@+id/layoutState"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/edittextshape"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutCity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="State"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/yeonsung_regular"/>
+
+        <EditText
+            android:id="@+id/state"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:background="@android:color/transparent"
+            android:hint="Enter State"
+            android:inputType="text"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+
+    <!-- PINCODE -->
+    <LinearLayout
+        android:id="@+id/layoutPincode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/edittextshape"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutState"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Pincode"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/yeonsung_regular"/>
+
+        <EditText
+            android:id="@+id/pincode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:background="@android:color/transparent"
+            android:hint="Enter Pincode"
+            android:inputType="number"
+            android:maxLength="6"
+            android:textColor="@color/black"/>
     </LinearLayout>
 
     <LinearLayout
@@ -162,7 +297,7 @@
         android:orientation="horizontal"
         android:outlineSpotShadowColor="@color/texColor"
         android:padding="4dp"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/layoutPincode"
         tools:layout_editor_absoluteX="8dp">
         <!-- Left Side Name -->
         <TextView

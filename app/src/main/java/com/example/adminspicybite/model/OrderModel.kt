@@ -11,6 +11,7 @@ data class OrderModel(
     var totalPrice: String? = "",
     var status: String? = "pending",   // pending, assigned, picked, on_way, delivered
     var assignedTo: String? = "",
+    var deliveryBoyName: String? = null,
     var orderAccepted: Boolean = false,
     var paymentReceived: Boolean = false,
     var currentTime: Long = 0,
