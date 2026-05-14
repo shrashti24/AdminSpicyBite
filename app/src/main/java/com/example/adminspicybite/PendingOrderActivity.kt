@@ -96,8 +96,7 @@ class PendingOrderActivity : AppCompatActivity(), PendingOrderAdapter.OnItemClic
                             // pending OR Rejected
 
                             if (
-                                order.status == "pending" ||
-                                order.status == "Rejected"
+                                order.status.equals("pending", true)
                             ) {
 
                                 order.itemPushKey = orderSnapshot.key
@@ -230,7 +229,7 @@ class PendingOrderActivity : AppCompatActivity(), PendingOrderAdapter.OnItemClic
 
             val activeDrops = snapshot.getValue(Int::class.java) ?: 0
 
-            if (activeDrops >= 1) {
+            if (activeDrops > 0) {
                 Toast.makeText(this, "Delivery Boy already busy 🚫", Toast.LENGTH_SHORT).show()
                 return@addOnSuccessListener
 
