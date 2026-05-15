@@ -1,7 +1,6 @@
 package com.example.adminspicybite.adapter
 
 import android.content.Context
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,70 +10,93 @@ import com.example.adminspicybite.model.AllMenu
 import com.google.firebase.database.DatabaseReference
 
 class MenuItemAdapter(
+
     private val context: Context,
+
     private val menuList: ArrayList<AllMenu>,
-    databaseReference: DatabaseReference,
-    private val onDeleteClickListener: (position: Int) -> Unit
-) : RecyclerView.Adapter<MenuItemAdapter.AddItemViewHolder>() {
 
-    private val itemQuantities = IntArray(menuList.size) { 1 }
+    private val databaseReference: DatabaseReference,
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddItemViewHolder {
+    private val onDeleteClick: (Int) -> Unit,
+
+    private val onEditClick: (Int) -> Unit
+
+) : RecyclerView.Adapter<MenuItemAdapter.MenuViewHolder>() {
+
+    inner class MenuViewHolder(
+        val binding: ItemItemBinding
+    ) : RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): MenuViewHolder {
+
         val binding = ItemItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        return AddItemViewHolder(binding)
+
+        return MenuViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: AddItemViewHolder, position: Int) {
-        holder.bind(position)
-    }
+    override fun onBindViewHolder(
+        holder: MenuViewHolder,
+        position: Int
+    ) {
 
-    override fun getItemCount(): Int = menuList.size
+        val menuItem = menuList[position]
 
-    inner class AddItemViewHolder(private val binding: ItemItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+        holder.binding.apply {
 
-        fun bind(position: Int) {
-            val quantity: Int=itemQuantities[position]
-            val menuItem: AllMenu = menuList[position]
-            val uriString: String?= menuItem.foodImage
-            val uri: Uri = Uri.parse(uriString)
-            binding.foodnametextview.text = menuItem.foodName
-            binding.pricetextview.text =menuItem.foodPrice
+            foodNameTextView.text =
+                menuItem.foodName
+
+            priceTextView.text =
+                "₹${menuItem.foodPrice}"
+
+            categoryTextView.text =
+                menuItem.foodCategory
+
+            // Status
+            if (menuItem.itemAvailable == true) {
+
+                statusTextView.text =
+                    "🟢 Available"
+
+            } else {
+
+                statusTextView.text =
+                    "🔴 Out Of Stock"
+            }
+
+            // Image
             Glide.with(context)
-                .load(uri)
-                .into(binding.foodImageView)
+                .load(menuItem.foodImage)
+                .into(foodImageView)
 
-            binding.quantity.text = itemQuantities[position].toString()
+            // Delete Click
+            deleteButton.setOnClickListener {
 
-            binding.plusButton.setOnClickListener {
-                if (itemQuantities[position] < 10) {
-                    itemQuantities[position]++
-                    binding.quantity.text =
-                        itemQuantities[position].toString()
-                }
+                onDeleteClick(position)
             }
 
-            binding.minusButton.setOnClickListener {
-                if (itemQuantities[position] > 1) {
-                    itemQuantities[position]--
-                    binding.quantity.text =
-                        itemQuantities[position].toString()
-                }
-            }
+            // Edit Click
+            // Edit Click (TOGGLE LOGIC)
+            editButton.setOnClickListener {
 
-            binding.deleteButton.setOnClickListener {
-                onDeleteClickListener(position)
+                menuItem.isEditing = !menuItem.isEditing
+
+                notifyItemChanged(position)
+
+                onEditClick(position)
             }
         }
     }
 
-    private fun deleteItem(position: Int) {
-        menuList.removeAt(position)
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, menuList.size)
+    override fun getItemCount(): Int {
+
+        return menuList.size
     }
 }

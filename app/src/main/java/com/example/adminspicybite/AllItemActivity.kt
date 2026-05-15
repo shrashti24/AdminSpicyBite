@@ -2,6 +2,8 @@ package com.example.adminspicybite
 
 import android.os.Bundle
 import android.util.Log
+import android.content.Intent
+import androidx.appcompat.app.AlertDialog
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -64,27 +66,113 @@ class AllItemActivity : AppCompatActivity() {
 
     private fun setAdapter() {
 
-        val adapter =
-            MenuItemAdapter(this@AllItemActivity, menuItems, databaseReference) { position ->
+        val adapter = MenuItemAdapter(
+
+            this@AllItemActivity,
+            menuItems,
+            databaseReference,
+
+            onDeleteClick = { position ->
                 deleteMenuItems(position)
+            },
+
+            onEditClick = { position ->
+
+                val intent = Intent(
+                    this@AllItemActivity,
+                    EditItemActivity::class.java
+                )
+
+                val selectedItem = menuItems[position]
+
+                intent.putExtra("key", selectedItem.key)
+
+                intent.putExtra(
+                    "foodName",
+                    selectedItem.foodName
+                )
+
+                intent.putExtra(
+                    "foodPrice",
+                    selectedItem.foodPrice
+                )
+
+                intent.putExtra(
+                    "foodCategory",
+                    selectedItem.foodCategory
+                )
+
+                intent.putExtra(
+                    "foodDescription",
+                    selectedItem.foodDescription
+                )
+
+                intent.putExtra(
+                    "foodIngrediant",
+                    selectedItem.foodIngrediant
+                )
+                intent.putExtra(
+                    "itemAvailable",
+                    selectedItem.itemAvailable
+                )
+                startActivity(intent)
             }
+        )
         binding.MenuRecycler.layoutManager = LinearLayoutManager(this)
         binding.MenuRecycler.adapter = adapter
     }
 
     private fun deleteMenuItems(position: Int) {
+
         val menuItemToDelete = menuItems[position]
-        val menuItemKey = menuItemToDelete.key
-        val foodMenuReferece: DatabaseReference =
-            databaseReference.child("menu").child(menuItemKey!!)
-        foodMenuReferece.removeValue().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                menuItems.removeAt(position)
-                binding.MenuRecycler.adapter?.notifyItemRemoved(position)
-            } else {
-                Toast.makeText(this, "Item not Deleted", Toast.LENGTH_SHORT).show()
+
+        AlertDialog.Builder(this)
+            .setTitle("Delete Item")
+            .setMessage(
+                "Are you sure you want to delete ${
+                    menuItemToDelete.foodName
+                } ?"
+            )
+
+            .setPositiveButton("Yes") { _, _ ->
+
+                val menuItemKey = menuItemToDelete.key
+
+                val foodMenuReference =
+                    databaseReference
+                        .child("menu")
+                        .child(menuItemKey!!)
+
+                foodMenuReference.removeValue()
+                    .addOnCompleteListener { task ->
+
+                        if (task.isSuccessful) {
+
+                            menuItems.removeAt(position)
+
+                            binding.MenuRecycler.adapter
+                                ?.notifyItemRemoved(position)
+
+                            Toast.makeText(
+                                this,
+                                "Item Deleted",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        } else {
+
+                            Toast.makeText(
+                                this,
+                                "Item Not Deleted",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
             }
-        }
+
+            .setNegativeButton("Cancel", null)
+
+            .show()
     }
 }
 
