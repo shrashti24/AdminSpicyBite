@@ -51,6 +51,18 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, PendingOrderActivity::class.java)
             startActivity(intent)
         }
+        binding.textView6.setOnClickListener {
+
+            val intent = Intent(this, CompletedOrderActivity::class.java)
+
+            startActivity(intent)
+        }
+        binding.completeOrders.setOnClickListener {
+
+            val intent = Intent(this, CompletedOrderActivity::class.java)
+
+            startActivity(intent)
+        }
         binding.logOutButton.setOnClickListener {
 
             androidx.appcompat.app.AlertDialog.Builder(this)

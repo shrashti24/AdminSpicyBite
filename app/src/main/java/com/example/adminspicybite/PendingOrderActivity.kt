@@ -171,7 +171,7 @@ class PendingOrderActivity : AppCompatActivity(), PendingOrderAdapter.OnItemClic
     override fun onItemClickListener(position: Int) {
         val intent = Intent(this, OrderDetailsActivity::class.java)
         val userOrderDetails = listOfOrderItem[position]
-        intent.putExtra("UserOrderDetails", userOrderDetails)
+        intent.putExtra("orderDetails", userOrderDetails)
         startActivity(intent)
 
     }

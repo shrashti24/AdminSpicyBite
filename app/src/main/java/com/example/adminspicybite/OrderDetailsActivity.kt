@@ -1,7 +1,6 @@
 package com.example.adminspicybite
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.adminspicybite.adapter.OrderDetailsAdapter
@@ -9,63 +8,43 @@ import com.example.adminspicybite.databinding.ActivityOrderDetailsBinding
 import com.example.adminspicybite.model.OrderModel
 
 class OrderDetailsActivity : AppCompatActivity() {
-    private val binding : ActivityOrderDetailsBinding by lazy {
-        ActivityOrderDetailsBinding.inflate(layoutInflater)
-    }
 
-    private var userName : String? = null
-    private var address : String? = null
-    private var phoneNumber : String? = null
-    private var totalPrice : String? = null
-    private  var foodNames : ArrayList<String> =arrayListOf()
-    private  var foodImages : ArrayList<String> =arrayListOf()
-    private var foodQuantity : ArrayList<Int> =arrayListOf()
-    private  var foodPrices : ArrayList<String> =arrayListOf()
-
+    private lateinit var binding: ActivityOrderDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        binding = ActivityOrderDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val order =
+            intent.getSerializableExtra("orderDetails") as? OrderModel
+
+        binding.tvName.text = order?.userName
+        binding.tvAddress.text = order?.address
+        binding.tvPhone.text = order?.phoneNumber
+        binding.tvAmount.text = order?.totalPrice
+        binding.tvStatus.text = order?.status
+        binding.tvDeliveryBoy.text = order?.deliveryBoyName
+
+        val foodNames = order?.foodNames ?: arrayListOf()
+        val foodPrices = order?.foodPrices ?: arrayListOf()
+        val foodImages = order?.foodImages ?: arrayListOf()
+        val foodQty = order?.foodQuantities ?: arrayListOf()
+
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(this)
+
+        binding.recyclerView.adapter =
+            OrderDetailsAdapter(
+                foodNames,
+                foodPrices,
+                foodImages,
+                foodQty
+            )
+
         binding.backButton.setOnClickListener {
-           finish()
+            finish()
         }
-        getDataFromIntent()
     }
-
-    private fun getDataFromIntent() {
-        val receivedOrderDetails=intent.getSerializableExtra("UserOrderDetails") as OrderModel
-        receivedOrderDetails?.let{
-                userName=receivedOrderDetails.userName
-                foodNames=receivedOrderDetails.foodNames as ArrayList<String>
-                foodImages=receivedOrderDetails.foodImages as ArrayList<String>
-                foodQuantity=receivedOrderDetails.foodQuantities as ArrayList<Int>
-                address=receivedOrderDetails.address
-                phoneNumber=receivedOrderDetails.phoneNumber
-                foodPrices=receivedOrderDetails.foodPrices as ArrayList<String>
-                totalPrice=receivedOrderDetails.totalPrice
-
-                setUserDetail()
-                setAdapter()
-        }
-
-    }
-
-
-    private fun setUserDetail() {
-        binding.name.text=userName
-        binding.address.text=address
-        binding.phone.text=phoneNumber
-        binding.totalpay.text=totalPrice
-
-
-    }
-    private fun setAdapter() {
-        binding.OrderDetailRecyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = OrderDetailsAdapter(this, foodNames, foodImages, foodQuantity, foodPrices)
-        binding.OrderDetailRecyclerView.adapter = adapter
-
-    }
-
 }

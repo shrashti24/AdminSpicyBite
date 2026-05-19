@@ -49,6 +49,7 @@ class OutForDeliveryActivity : AppCompatActivity() {
                     val order = orderSnapshot.getValue(OrderModel::class.java)
 
                     if (order != null) {
+
                         if (
                             order.status == "Accepted" ||
                             order.status == "Picked Up" ||

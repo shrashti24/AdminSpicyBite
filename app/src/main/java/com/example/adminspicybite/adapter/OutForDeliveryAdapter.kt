@@ -1,12 +1,12 @@
 package com.example.adminspicybite.adapter
 
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import com.example.adminspicybite.databinding.DeliveryItemBinding
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.adminspicybite.OrderDetailsActivity
 import com.example.adminspicybite.model.OrderModel
 
 class OutForDeliveryAdapter(
@@ -28,7 +28,17 @@ class OutForDeliveryAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val order = list[position]
+        holder.itemView.setOnClickListener {
 
+            val intent = Intent(
+                holder.itemView.context,
+                OrderDetailsActivity::class.java
+            )
+
+            intent.putExtra("orderDetails", order)
+
+            holder.itemView.context.startActivity(intent)
+        }
         holder.binding.customername.text = order.userName ?: "No Name"
         holder.binding.deliveryBoyName.text =
             order.deliveryBoyName ?: "No Boy"
@@ -37,17 +47,30 @@ class OutForDeliveryAdapter(
         if (payment) {
             holder.binding.statusmoney.text = "Received"
             holder.binding.statusmoney.setTextColor(Color.GREEN)
+            holder.binding.statusColor.setCardBackgroundColor(Color.GREEN)
+
+
         } else {
             holder.binding.statusmoney.text = "Not Received"
             holder.binding.statusmoney.setTextColor(Color.RED)
+            holder.binding.statusColor.setCardBackgroundColor(Color.RED)
         }
 
-        val status = order.status ?: ""
-
-        when (status) {
-            "out_for_delivery" -> holder.binding.statusColor.setCardBackgroundColor(Color.CYAN)
-            "Delivered" -> holder.binding.statusColor.setCardBackgroundColor(Color.GREEN)
-            else -> holder.binding.statusColor.setCardBackgroundColor(Color.GRAY)
-        }
+//        val status = order.status ?: ""
+//
+//        when (status) {
+//
+//            "Accepted" ->
+//                holder.binding.statusColor.setCardBackgroundColor(Color.YELLOW)
+//
+//            "On The Way" ->
+//                holder.binding.statusColor.setCardBackgroundColor(Color.CYAN)
+//
+//            "Delivered" ->
+//                holder.binding.statusColor.setCardBackgroundColor(Color.GREEN)
+//
+//            else ->
+//                holder.binding.statusColor.setCardBackgroundColor(Color.RED)
+//        }
     }
 }

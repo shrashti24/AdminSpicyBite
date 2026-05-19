@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AdminSpicyBite">
         <activity
+            android:name=".CompletedOrderActivity"
+            android:exported="false" />
+        <activity
             android:name=".EditItemActivity"
             android:exported="false" />
         <activity
